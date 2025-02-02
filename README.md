@@ -1,9 +1,19 @@
-# 🌡️ ESP32 IoT Temperature & LED Control System
+# 🌡️ ESP32 IoT Sıcaklık ve LED Kontrol Sistemi
 
 <div align="center">
 
-<h3>🚀 Web Tabanlı IoT Sıcaklık İzleme ve LED Kontrol Sistemi</h3>
+![GitHub last commit](https://img.shields.io/github/last-commit/brkyozclkl/Control-LEDs-and-monitor-temperature-humidity-via-web-server-on-ESP32)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![ESP32](https://img.shields.io/badge/ESP32-v4.4+-blue.svg)](https://www.espressif.com/)
+[![DHT11](https://img.shields.io/badge/Sensor-DHT11-green.svg)](https://www.adafruit.com/product/386)
 
+<h3>🚀 Web Tabanlı IoT Sıcaklık, Nem İzleme ve LED Kontrol Sistemi</h3>
+
+[Özellikler](#özellikler) •
+[Donanım](#donanım-gereksinimleri) •
+[Kurulum](#kurulum) •
+[Devre Şeması](#devre-şeması) •
+[Kod](#kod-açıklaması)
 
 <img src="docs/project-preview.jpg" alt="Project Preview" width="600"/>
 
@@ -15,37 +25,37 @@
 
 | 🎯 Özellik | 📝 Açıklama |
 |------------|-------------|
-| 🌡️ **Sıcaklık İzleme** | Gerçek zamanlı sıcaklık ve nem takibi |
-| 💡 **LED Kontrolü** | Web arayüzü üzerinden LED kontrolü |
-| 📊 **Grafik Arayüz** | Sıcaklık ve nem verilerinin grafiksel gösterimi |
+| 🌡️ **Sıcaklık ve Nem İzleme** | DHT11 sensörü ile gerçek zamanlı ölçüm |
+| 💡 **3x LED Kontrolü** | Web arayüzü üzerinden 3 ayrı LED kontrolü |
+| 🔄 **Otomatik Yenileme** | 4 saniyelik aralıklarla veri güncelleme |
 | 📱 **Responsive Tasarım** | Mobil uyumlu web arayüzü |
-| 🔄 **Otomatik Yenileme** | Anlık veri güncelleme |
-| 📡 **WiFi Bağlantısı** | Kablosuz erişim ve kontrol |
+| 📊 **Görsel Göstergeler** | Font Awesome ikonları ile zengin görsel arayüz |
+| 📡 **WiFi Bağlantısı** | Kablosuz erişim ve kontrol imkanı |
 
 </div>
 
 ## 🛠️ Donanım Gereksinimleri
 
 - ESP32 Geliştirme Kartı
-- DHT11/DHT22 Sıcaklık ve Nem Sensörü
-- LED'ler (x3)
-- 220Ω Dirençler (x3)
+- DHT11 Sıcaklık ve Nem Sensörü
+- 3x LED
+- 3x 220Ω Direnç
 - Breadboard
 - Jumper Kablolar
 
 ## 📝 Kurulum
 
-1. **Arduino IDE Kurulumu**
-```bash
-# ESP32 board URL'sini Arduino IDE'ye ekleyin
-https://dl.espressif.com/dl/package_esp32_index.json
-```
+1. **Arduino IDE Kurulumu ve Ayarları**
+   - Arduino IDE'yi yükleyin
+   - ESP32 board desteği için yönetici URL'sini ekleyin:
+   ```
+   https://dl.espressif.com/dl/package_esp32_index.json
+   ```
 
 2. **Gerekli Kütüphaneler**
-- ESPAsyncWebServer
-- AsyncTCP
-- DHT sensor library
-- Adafruit Unified Sensor
+   - WiFi.h
+   - WebServer.h
+   - DHT.h
 
 3. **WiFi Yapılandırması**
 ```cpp
@@ -53,38 +63,52 @@ const char* ssid = "WiFi_Adınız";
 const char* password = "WiFi_Şifreniz";
 ```
 
-## 📊 Web Arayüzü Özellikleri
-
-- **Gerçek Zamanlı Veriler**
-  - Anlık sıcaklık gösterimi
-  - Nem seviyesi takibi
-  - LED durumları
-
-- **Kontrol Paneli**
-  - LED açma/kapama düğmeleri
-  - Veri güncelleme hızı ayarı
-  - Sistem durumu göstergesi
-
-## 🔌 Devre Şeması
+## 🔌 Pin Bağlantıları
 
 ```
-ESP32     DHT11/22    LED1    LED2    LED3
+ESP32     DHT11    LED1    LED2    LED3
 3.3V  -->  VCC
-GIO21  -->  DATA
+GIO27  -->  DATA
 GND   -->  GND
-GIO19  ---------------[220Ω]---->|
-GIO18  ---------------[220Ω]---->|
-GIO5   ---------------[220Ω]---->|
+GIO32  ----[220Ω]---->|    
+GIO33  ----[220Ω]----------->|
+GIO26  ----[220Ω]---------------->|
 ```
 
-## 🚀 Nasıl Çalışır?
+## 💻 Kod Açıklaması
 
-1. ESP32, DHT sensöründen sıcaklık ve nem verilerini okur
-2. Async Web Server üzerinden web arayüzü sunulur
-3. JavaScript ile veriler düzenli olarak güncellenir
-4. WebSocket bağlantısı ile LED kontrolü sağlanır
+### Ana Bileşenler
+1. **WiFi Bağlantısı**: ESP32'nin WiFi ağına bağlanması
+2. **Web Server**: HTTP isteklerini işleyen asenkron web sunucusu
+3. **DHT11 Sensör**: Sıcaklık ve nem verilerinin okunması
+4. **LED Kontrolü**: 3 ayrı LED'in web arayüzü üzerinden kontrolü
 
+### Önemli Fonksiyonlar
+```cpp
+void handleRoot() {
+    // Web sayfası HTML içeriğinin oluşturulması
+}
 
+float readDHTTemperature() {
+    // Sıcaklık verisinin okunması
+}
+
+float readDHTHumidity() {
+    // Nem verisinin okunması
+}
+```
+
+### Web Arayüzü
+- Sıcaklık ve nem değerlerinin görüntülenmesi
+- Her LED için açma/kapama butonları
+- 4 saniyelik otomatik sayfa yenileme
+- Responsive tasarım
+
+## 📱 Arayüz Görüntüsü
+
+<div align="center">
+<img src="docs/interface.jpg" width="300" />
+</div>
 
 ## 👨‍💻 Geliştirici
 
